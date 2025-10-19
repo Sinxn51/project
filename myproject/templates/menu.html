@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}My Menu - NutriPlan Pro{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1 class="dashboard-title">Your Personalized Menu</h1>
+        <p class="dashboard-subtitle">AI-generated meal plan tailored to your health goals</p>
+    </div>
+</section>
+
+<!-- Menu Content -->
+<section class="container" style="padding: 2rem 0;">
+    {% if meals %}
+        <div class="grid grid-3">
+            {% for meal in meals %}
+            <div class="meal-card fade-in-up">
+                <div class="meal-header">
+                    <div class="meal-type">
+                        {% if loop.index % 3 == 1 %}
+                            <i class="fas fa-sun"></i> Breakfast
+                        {% elif loop.index % 3 == 2 %}
+                            <i class="fas fa-sun"></i> Lunch
+                        {% else %}
+                            <i class="fas fa-moon"></i> Dinner
+                        {% endif %}
+                    </div>
+                    <div class="meal-name">{{ meal.Name }}</div>
+                </div>
+                
+                <div class="meal-content">
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Calories }}</div>
+                            <div class="nutrition-label">Calories</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Proteins }}g</div>
+                            <div class="nutrition-label">Protein</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Carbohydrates }}g</div>
+                            <div class="nutrition-label">Carbs</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Fats }}g</div>
+                            <div class="nutrition-label">Fats</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-list"></i> Ingredients
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ meal.Ingredients }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-utensils"></i> Instructions
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ meal.Steps }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--gray-200);">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; font-size: 0.75rem; color: var(--gray-600);">
+                            <div>
+                                <strong>Fiber:</strong> {{ meal.Fiber }}g
+                            </div>
+                            <div>
+                                <strong>Cholesterol:</strong> {{ meal.Cholestrol }}mg
+                            </div>
+                            <div>
+                                <strong>Sodium:</strong> {{ meal.Sodium }}mg
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="text-center mt-8">
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ url_for('feedback') }}" class="btn btn-primary">
+                    <i class="fas fa-star"></i> Rate This Menu
+                </a>
+                <a href="{{ url_for('recipes') }}" class="btn btn-outline">
+                    <i class="fas fa-book"></i> Browse More Recipes
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <div class="text-center" style="padding: 4rem 0;">
+            <i class="fas fa-utensils" style="font-size: 4rem; color: var(--gray-400); margin-bottom: 2rem;"></i>
+            <h2 style="color: var(--gray-900); margin-bottom: 1rem;">No Menu Available</h2>
+            <p style="color: var(--gray-600); margin-bottom: 2rem;">We're working on generating your personalized menu. Please check back later.</p>
+            <a href="{{ url_for('home') }}" class="btn btn-primary">
+                <i class="fas fa-home"></i> Back to Home
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.water-tracker {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.water-status {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.water-progress {
+    width: 200px;
+    height: 200px;
+    margin: 2rem auto;
+    position: relative;
+}
+
+.water-circle {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 10;
+}
+
+.water-fill {
+    fill: none;
+    stroke: #3498db;
+    stroke-width: 10;
+    stroke-linecap: round;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    transition: stroke-dasharray 0.3s ease;
+}
+
+.water-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    color: #3498db;
+}
+
+.water-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.water-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+}
+
+.water-btn {
+    padding: 0.5rem;
+    border: 2px solid #3498db;
+    border-radius: 5px;
+    background: white;
+    color: #3498db;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.water-btn:hover {
+    background: #3498db;
+    color: white;
+}
+</style>
+
+<div class="water-tracker">
+    <h1 class="text-center mb-4">Water Intake Tracker</h1>
+
+    <div class="water-status">
+        <h3>Today's Progress</h3>
+        <div class="water-progress">
+            <svg viewBox="0 0 100 100">
+                <circle class="water-circle" cx="50" cy="50" r="45"/>
+                <circle class="water-fill" cx="50" cy="50" r="45"
+                        stroke-dasharray="{{ (total_today / 2000 * 283)|round }}, 283"/>
+            </svg>
+            <div class="water-text">
+                {{ (total_today / 1000)|round(1) }}L
+            </div>
+        </div>
+        <p>Goal: 2.0L per day</p>
+        <div class="progress-text">
+            {% if total_today >= 2000 %}
+            <p class="text-success">Daily goal achieved! 🎉</p>
+            {% else %}
+            <p>{{ ((2000 - total_today) / 1000)|round(1) }}L to go</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="water-form">
+        <h3>Add Water Intake</h3>
+        <form method="POST" class="mt-3">
+            <div class="water-buttons">
+                <button type="submit" name="amount" value="200" class="water-btn">200ml</button>
+                <button type="submit" name="amount" value="300" class="water-btn">300ml</button>
+                <button type="submit" name="amount" value="500" class="water-btn">500ml</button>
+                <button type="submit" name="amount" value="1000" class="water-btn">1L</button>
+            </div>
+            <div class="mt-3">
+                <label for="custom-amount">Custom amount (ml):</label>
+                <div class="d-flex gap-2">
+                    <input type="number" name="amount" id="custom-amount" class="form-input" step="50" min="50">
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

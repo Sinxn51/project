@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NutriPlan Pro{% endblock %}</title>
+    
+    <!-- Modern CSS Framework -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="logo">
+                <i class="fas fa-apple-alt"></i> NutriPlan Pro
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="{{ url_for('home') }}"><i class="fas fa-home"></i> Home</a></li>
+        {% if current_user.is_authenticated %}
+                <li><a href="{{ url_for('menu') }}"><i class="fas fa-utensils"></i> My Menu</a></li>
+                <li><a href="{{ url_for('recipes') }}"><i class="fas fa-book"></i> Recipes</a></li>
+                <li><a href="{{ url_for('exercise') }}"><i class="fas fa-dumbbell"></i> Exercise</a></li>
+                <li><a href="{{ url_for('workout_plans') }}"><i class="fas fa-running"></i> Workout Plans</a></li>
+                <li><a href="{{ url_for('weight_tracker') }}"><i class="fas fa-weight"></i> Weight Tracker</a></li>
+                <li><a href="{{ url_for('chat') }}"><i class="fas fa-comments"></i> Chat</a></li>
+                <li><a href="{{ url_for('feedback') }}"><i class="fas fa-star"></i> Feedback</a></li>
+                <li><a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        {% else %}
+                <li><a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                <li><a href="{{ url_for('register') }}"><i class="fas fa-user-plus"></i> Register</a></li>
+        {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="container mt-4">
+                {% for message in messages %}
+                    <div class="alert alert-success fade-in-up" style="background: var(--secondary-color); color: white; padding: 1rem; border-radius: var(--border-radius); margin-bottom: 1rem;">
+                        <i class="fas fa-check-circle"></i> {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--gray-800); color: var(--white); padding: 3rem 0; margin-top: 4rem;">
+        <div class="container">
+            <div class="grid grid-3">
+                <div>
+                    <h3 style="color: var(--white); margin-bottom: 1rem;">NutriPlan Pro</h3>
+                    <p style="color: var(--gray-400);">Your personalized nutrition companion for a healthier lifestyle.</p>
+                </div>
+                <div>
+                    <h4 style="color: var(--white); margin-bottom: 1rem;">Quick Links</h4>
+                    <ul style="list-style: none;">
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('home') }}" style="color: var(--gray-400); text-decoration: none;">Home</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('recipes') }}" style="color: var(--gray-400); text-decoration: none;">Recipes</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="{{ url_for('exercise') }}" style="color: var(--gray-400); text-decoration: none;">Exercise</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="color: var(--white); margin-bottom: 1rem;">Contact</h4>
+                    <p style="color: var(--gray-400);">support@nutriplanpro.com</p>
+                    <p style="color: var(--gray-400);">+1 (555) 123-4567</p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--gray-700); margin-top: 2rem; padding-top: 2rem; text-align: center; color: var(--gray-400);">
+                <p>&copy; 2024 NutriPlan Pro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add fade-in animation to cards
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in-up');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .meal-card').forEach(card => {
+            observer.observe(card);
+        });
+    </script>
+  </body>
+</html>

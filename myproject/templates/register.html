@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Register - NutriPlan Pro{% endblock %}
+
+{% block content %}
+<section style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); min-height: 100vh; display: flex; align-items: center; padding: 2rem 0;">
+    <div class="container">
+        <div class="form-container fade-in-up" style="max-width: 600px;">
+            <div class="text-center mb-6">
+                <i class="fas fa-user-plus" style="font-size: 3rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                <h1 class="form-title">Create Your Account</h1>
+                <p style="color: var(--gray-600);">Join NutriPlan Pro and start your health journey</p>
+            </div>
+
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="email">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        {{ form.email(class="form-input", placeholder="Enter your email", id="email") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="username">
+                            <i class="fas fa-user"></i> Username
+                        </label>
+                        {{ form.username(class="form-input", placeholder="Choose a username", id="username") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="password">
+                            <i class="fas fa-lock"></i> Password
+                        </label>
+                        {{ form.password(class="form-input", placeholder="Create a password", id="password") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="pass_confirm">
+                            <i class="fas fa-lock"></i> Confirm Password
+                        </label>
+                        {{ form.pass_confirm(class="form-input", placeholder="Confirm your password", id="pass_confirm") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="age">
+                            <i class="fas fa-calendar"></i> Age
+                        </label>
+                        {{ form.age(class="form-input", placeholder="Your age", id="age") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="height">
+                            <i class="fas fa-ruler-vertical"></i> Height (cm)
+                        </label>
+                        {{ form.height(class="form-input", placeholder="Height in cm", id="height") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="weight">
+                            <i class="fas fa-weight"></i> Weight (kg)
+                        </label>
+                        {{ form.weight(class="form-input", placeholder="Weight in kg", id="weight") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="blood">
+                            <i class="fas fa-tint"></i> Blood Type
+                        </label>
+                        {{ form.blood(class="form-select", id="blood") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="health_issues">
+                            <i class="fas fa-heartbeat"></i> Health Conditions
+                        </label>
+                        {{ form.health_issues(class="form-select", id="health_issues") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="food_type">
+                            <i class="fas fa-utensils"></i> Food Type
+                        </label>
+                        {{ form.food_type(class="form-select", id="food_type") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="exercise">
+                            <i class="fas fa-dumbbell"></i> Exercise Level
+                        </label>
+                        {{ form.exercise(class="form-select", id="exercise") }}
+                    </div>
+                </div>
+
+                <div class="grid grid-2">
+                    <div class="form-group">
+                        <label class="form-label" for="diet_pref">
+                            <i class="fas fa-leaf"></i> Diet Preference
+                        </label>
+                        {{ form.diet_pref(class="form-select", id="diet_pref") }}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="plan_period">
+                            <i class="fas fa-calendar-alt"></i> Plan Period
+                        </label>
+                        {{ form.plan_period(class="form-select", id="plan_period") }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary w-full", style="font-size: 1rem; padding: 1rem;") }}
+                </div>
+            </form>
+
+            <div class="text-center mt-6">
+                <p style="color: var(--gray-600);">Already have an account? 
+                    <a href="{{ url_for('login') }}" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">Sign in here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

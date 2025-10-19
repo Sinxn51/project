@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}AI Chat - NutriPlan Pro{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1 class="dashboard-title">AI Nutrition Assistant</h1>
+        <p class="dashboard-subtitle">Get instant answers to your nutrition and health questions</p>
+    </div>
+</section>
+
+<!-- Chat Content -->
+<section class="container" style="padding: 2rem 0;">
+    <div class="card fade-in-up" style="max-width: 800px; margin: 0 auto;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-robot"></i> Chat with NutriBot
+            </h3>
+            <p style="color: var(--gray-600); margin: 0;">Ask me anything about nutrition, diet, or health!</p>
+        </div>
+        
+        <div class="card-body">
+            <!-- Chat Messages -->
+            <div id="chatMessages" style="height: 400px; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: var(--border-radius); padding: 1rem; margin-bottom: 1rem; background: var(--gray-50);">
+                {% if answer %}
+                <div style="margin-bottom: 1rem;">
+                    <div style="background: var(--primary-color); color: white; padding: 1rem; border-radius: var(--border-radius); max-width: 80%; margin-left: auto;">
+                        <strong>NutriBot:</strong> {{ answer }}
+                    </div>
+                </div>
+                {% else %}
+                <div style="text-align: center; color: var(--gray-500); padding: 2rem;">
+                    <i class="fas fa-comments" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                    <p>Start a conversation with our AI nutrition assistant!</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Chat Input -->
+            <form method="POST" style="display: flex; gap: 1rem;">
+                <input type="text" name="prompt" placeholder="Ask about nutrition, diet, or health..." 
+                       class="form-input" style="flex: 1;" required>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Quick Questions -->
+    <div class="mt-8">
+        <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; text-align: center;">
+            Quick Questions
+        </h3>
+        <div class="grid grid-2">
+            <div class="card fade-in-up">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-question-circle"></i> Common Questions
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=weight+loss" style="color: var(--primary-color); text-decoration: none;">
+                                How can I lose weight safely?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=protein" style="color: var(--primary-color); text-decoration: none;">
+                                How much protein do I need?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=vitamins" style="color: var(--primary-color); text-decoration: none;">
+                                What vitamins should I take?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0;">
+                            <a href="?prompt=hydration" style="color: var(--primary-color); text-decoration: none;">
+                                How much water should I drink?
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card fade-in-up">
+                <div class="card-body">
+                    <h4 class="card-title">
+                        <i class="fas fa-lightbulb"></i> Tips & Advice
+                    </h4>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=meal+timing" style="color: var(--primary-color); text-decoration: none;">
+                                When should I eat my meals?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=healthy+snacks" style="color: var(--primary-color); text-decoration: none;">
+                                What are healthy snack options?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid var(--gray-200);">
+                            <a href="?prompt=exercise+nutrition" style="color: var(--primary-color); text-decoration: none;">
+                                What should I eat before/after exercise?
+                            </a>
+                        </li>
+                        <li style="padding: 0.5rem 0;">
+                            <a href="?prompt=portion+control" style="color: var(--primary-color); text-decoration: none;">
+                                How can I control portion sizes?
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Auto-scroll to bottom of chat
+function scrollToBottom() {
+    const chatMessages = document.getElementById('chatMessages');
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Scroll to bottom on page load
+window.addEventListener('load', scrollToBottom);
+
+// Add smooth scrolling for quick question links
+document.querySelectorAll('a[href^="?prompt="]').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const prompt = this.getAttribute('href').split('=')[1];
+        const form = document.querySelector('form');
+        const input = form.querySelector('input[name="prompt"]');
+        input.value = decodeURIComponent(prompt);
+        form.submit();
+    });
+});
+</script>
+{% endblock %}

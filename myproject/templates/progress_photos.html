@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.photos-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.photo-upload {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.photo-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.photo-img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.photo-info {
+    padding: 1rem;
+}
+
+.photo-date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.drag-area {
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s;
+}
+
+.drag-area:hover {
+    border-color: #3498db;
+}
+
+.drag-area.active {
+    border-color: #3498db;
+    background: #f8f9fa;
+}
+</style>
+
+<div class="photos-container">
+    <h1 class="text-center mb-4">Progress Photos</h1>
+
+    <div class="photo-upload">
+        <h3>Upload New Photo</h3>
+        <form method="POST" enctype="multipart/form-data" id="upload-form">
+            <div class="drag-area" id="drag-area">
+                <i class="fas fa-cloud-upload-alt fa-3x mb-3"></i>
+                <p>Drag & Drop your photo here or click to browse</p>
+                <input type="file" name="photo" id="file-input" accept="image/*" hidden required>
+            </div>
+            
+            <div class="mt-3">
+                <label for="description">Description (optional)</label>
+                <textarea name="description" id="description" class="form-input" rows="3"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-primary mt-3">Upload Photo</button>
+        </form>
+    </div>
+
+    <div class="photo-grid">
+        {% for photo in photos %}
+        <div class="photo-card">
+            <img src="data:image/jpeg;base64,{{ photo.photo_data }}" 
+                 alt="Progress photo from {{ photo.date.strftime('%Y-%m-%d') }}"
+                 class="photo-img">
+            <div class="photo-info">
+                <p class="photo-date">{{ photo.date.strftime('%B %d, %Y') }}</p>
+                {% if photo.description %}
+                <p class="mt-2">{{ photo.description }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+const dragArea = document.getElementById('drag-area');
+const fileInput = document.getElementById('file-input');
+
+dragArea.addEventListener('click', () => fileInput.click());
+
+dragArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dragArea.classList.add('active');
+});
+
+dragArea.addEventListener('dragleave', () => {
+    dragArea.classList.remove('active');
+});
+
+dragArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dragArea.classList.remove('active');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        fileInput.files = e.dataTransfer.files;
+    }
+});
+
+fileInput.addEventListener('change', () => {
+    if (fileInput.files.length > 0) {
+        const fileName = fileInput.files[0].name;
+        dragArea.innerHTML = `<p>Selected: ${fileName}</p>`;
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,12 @@
+Flask
+Flask-Login
+Flask-WTF
+WTForms
+email-validator
+pymongo
+pandas
+numpy
+scipy
+scikit-learn
+python-dotenv
+

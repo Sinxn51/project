@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+{% block title %}Feedback - NutriPlan Pro{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1 class="dashboard-title">Rate Your Menu</h1>
+        <p class="dashboard-subtitle">Help us improve your personalized nutrition experience</p>
+    </div>
+</section>
+
+<!-- Feedback Content -->
+<section class="container" style="padding: 2rem 0;">
+    <div class="card fade-in-up" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-star"></i> Menu Feedback
+            </h3>
+            <p style="color: var(--gray-600); margin: 0;">Your feedback helps us create better meal plans for you</p>
+        </div>
+        
+        <div class="card-body">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-star"></i> Overall Rating
+                    </label>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <button type="button" class="star-btn" data-rating="1">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-rating="2">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-rating="3">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-rating="4">
+                            <i class="far fa-star"></i>
+                        </button>
+                        <button type="button" class="star-btn" data-rating="5">
+                            <i class="far fa-star"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" name="rating" id="rating" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-heart"></i> Favorite Meal
+                    </label>
+                    <select name="favorite_meal" class="form-select">
+                        <option value="">Select your favorite meal</option>
+                        {% for meal in meals %}
+                        <option value="{{ meal.Name }}">{{ meal.Name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-times"></i> Least Favorite Meal
+                    </label>
+                    <select name="least_favorite_meal" class="form-select">
+                        <option value="">Select your least favorite meal</option>
+                        {% for meal in meals %}
+                        <option value="{{ meal.Name }}">{{ meal.Name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-comment"></i> Additional Comments
+                    </label>
+                    <textarea name="comments" class="form-input" rows="4" placeholder="Tell us what you think about your menu..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="fas fa-utensils"></i> Dietary Preferences
+                    </label>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 0.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="preferences" value="more_protein" style="margin-right: 0.5rem;">
+                            More Protein
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="preferences" value="less_carbs" style="margin-right: 0.5rem;">
+                            Less Carbs
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="preferences" value="more_vegetables" style="margin-right: 0.5rem;">
+                            More Vegetables
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" name="preferences" value="spicier_food" style="margin-right: 0.5rem;">
+                            Spicier Food
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    {{ form.submit(class="btn btn-primary w-full", style="font-size: 1rem; padding: 1rem;") }}
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Current Menu Preview -->
+    {% if meals %}
+    <div class="mt-8">
+        <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--gray-900); margin-bottom: 1rem; text-align: center;">
+            Your Current Menu
+        </h3>
+        <div class="grid grid-3">
+            {% for meal in meals %}
+            <div class="meal-card fade-in-up">
+                <div class="meal-header">
+                    <div class="meal-type">
+                        {% if loop.index % 3 == 1 %}
+                            <i class="fas fa-sun"></i> Breakfast
+                        {% elif loop.index % 3 == 2 %}
+                            <i class="fas fa-sun"></i> Lunch
+                        {% else %}
+                            <i class="fas fa-moon"></i> Dinner
+                        {% endif %}
+                    </div>
+                    <div class="meal-name">{{ meal.Name }}</div>
+                </div>
+                <div class="meal-content">
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Calories }}</div>
+                            <div class="nutrition-label">Calories</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ meal.Proteins }}g</div>
+                            <div class="nutrition-label">Protein</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.star-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--gray-300);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.star-btn:hover,
+.star-btn.active {
+    color: var(--accent-color);
+}
+
+.star-btn.active ~ .star-btn {
+    color: var(--gray-300);
+}
+</style>
+
+<script>
+// Star rating functionality
+document.querySelectorAll('.star-btn').forEach((btn, index) => {
+    btn.addEventListener('click', function() {
+        const rating = parseInt(this.dataset.rating);
+        document.getElementById('rating').value = rating;
+        
+        // Update star display
+        document.querySelectorAll('.star-btn').forEach((star, starIndex) => {
+            if (starIndex < rating) {
+                star.classList.add('active');
+                star.innerHTML = '<i class="fas fa-star"></i>';
+            } else {
+                star.classList.remove('active');
+                star.innerHTML = '<i class="far fa-star"></i>';
+            }
+        });
+    });
+    
+    // Hover effect
+    btn.addEventListener('mouseenter', function() {
+        const rating = parseInt(this.dataset.rating);
+        document.querySelectorAll('.star-btn').forEach((star, starIndex) => {
+            if (starIndex < rating) {
+                star.style.color = 'var(--accent-color)';
+            }
+        });
+    });
+    
+    btn.addEventListener('mouseleave', function() {
+        const currentRating = document.getElementById('rating').value;
+        document.querySelectorAll('.star-btn').forEach((star, starIndex) => {
+            if (starIndex < currentRating) {
+                star.style.color = 'var(--accent-color)';
+            } else {
+                star.style.color = 'var(--gray-300)';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

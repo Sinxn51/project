@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.achievements-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.achievement-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card.locked {
+    opacity: 0.7;
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.achievement-name {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.achievement-desc {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.achievement-date {
+    font-size: 0.8rem;
+    color: #999;
+    margin-top: 1rem;
+}
+
+.category-title {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    color: #333;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 0.5rem;
+}
+
+.locked-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+/* Achievement colors by category */
+.achievement-card.weight_tracker { border-top: 4px solid #3498db; }
+.achievement-card.water_intake { border-top: 4px solid #2ecc71; }
+.achievement-card.workout { border-top: 4px solid #e74c3c; }
+.achievement-card.recipes { border-top: 4px solid #f1c40f; }
+</style>
+
+<div class="achievements-container">
+    <h1 class="text-center mb-4">Achievements</h1>
+
+    {% for category, achievements in all_achievements.items() %}
+    <h2 class="category-title">{{ category|replace('_', ' ')|title }}</h2>
+    <div class="achievements-grid">
+        {% for achievement_id, achievement in achievements.items() %}
+        {% set earned = user_achievements|selectattr('category', 'equalto', category)|selectattr('achievement_id', 'equalto', achievement_id)|list %}
+        <div class="achievement-card {{ category }} {% if not earned %}locked{% endif %}">
+            <div class="achievement-icon">
+                {% if category == 'weight_tracker' %}
+                <i class="fas fa-weight"></i>
+                {% elif category == 'water_intake' %}
+                <i class="fas fa-tint"></i>
+                {% elif category == 'workout' %}
+                <i class="fas fa-dumbbell"></i>
+                {% elif category == 'recipes' %}
+                <i class="fas fa-utensils"></i>
+                {% endif %}
+            </div>
+            <h3 class="achievement-name">{{ achievement.name }}</h3>
+            <p class="achievement-desc">{{ achievement.description }}</p>
+            {% if earned %}
+            <p class="achievement-date">Earned on {{ earned[0].date_earned.strftime('%B %d, %Y') }}</p>
+            {% else %}
+            <div class="locked-overlay">
+                <i class="fas fa-lock"></i>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

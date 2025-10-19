@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.workout-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.workout-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.workout-form {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.exercise-list {
+    margin: 1rem 0;
+}
+
+.exercise-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.complete-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.complete-btn:hover {
+    background: #45a049;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+</style>
+
+<div class="workout-container">
+    <h1 class="text-center mb-4">Workout Plans</h1>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Total Plans</h3>
+            <p class="h2">{{ plans|length }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Workouts</h3>
+            <p class="h2">{{ plans|sum(attribute='completed_workouts') }}</p>
+        </div>
+    </div>
+
+    <div class="workout-form">
+        <h3>Create New Workout Plan</h3>
+        <form method="POST">
+            <div class="mb-3">
+                <label for="plan-name" class="form-label">Plan Name</label>
+                <input type="text" class="form-input" id="plan-name" name="name" required>
+            </div>
+            
+            <div id="exercises-container">
+                <h4>Exercises</h4>
+                <div class="exercise-list">
+                    <div class="exercise-item">
+                        <input type="text" class="form-input" name="exercises[]" placeholder="Exercise name" required>
+                        <button type="button" class="btn btn-danger remove-exercise">&times;</button>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary" id="add-exercise">Add Exercise</button>
+            </div>
+            
+            <button type="submit" class="btn btn-primary mt-3">Create Plan</button>
+        </form>
+    </div>
+
+    <div class="workout-list">
+        {% for plan in plans %}
+        <div class="workout-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3>{{ plan.name }}</h3>
+                <span class="badge bg-primary">{{ plan.completed_workouts }} completed</span>
+            </div>
+            
+            <div class="exercise-list">
+                {% for exercise in plan.exercises %}
+                <div class="exercise-item">
+                    <span>{{ exercise }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <button class="complete-btn" onclick="completeWorkout('{{ plan._id }}')">
+                Complete Workout
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+document.getElementById('add-exercise').addEventListener('click', function() {
+    const container = document.querySelector('.exercise-list');
+    const newExercise = document.createElement('div');
+    newExercise.className = 'exercise-item';
+    newExercise.innerHTML = `
+        <input type="text" class="form-input" name="exercises[]" placeholder="Exercise name" required>
+        <button type="button" class="btn btn-danger remove-exercise">&times;</button>
+    `;
+    container.appendChild(newExercise);
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-exercise')) {
+        const items = document.querySelectorAll('.exercise-item');
+        if (items.length > 1) {
+            e.target.closest('.exercise-item').remove();
+        }
+    }
+});
+
+function completeWorkout(planId) {
+    fetch(`/workout-plan/${planId}/complete`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+</script>
+
+{% endblock %}

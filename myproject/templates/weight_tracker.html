@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.weight-tracker {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.weight-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.weight-history {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.weight-chart {
+    margin: 2rem 0;
+    height: 300px;
+}
+
+.entry-form {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.weight-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.weight-table th,
+.weight-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.weight-table th {
+    background: #f8f9fa;
+    font-weight: 600;
+}
+</style>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div class="weight-tracker">
+    <h1 class="text-center mb-4">Weight Tracker</h1>
+
+    <div class="weight-form">
+        <h3>Add New Weight Entry</h3>
+        <form method="POST" class="entry-form">
+            <input type="number" 
+                   name="weight" 
+                   step="0.1" 
+                   class="form-input" 
+                   placeholder="Enter weight in kg"
+                   required>
+            <button type="submit" class="btn btn-primary">Add Entry</button>
+        </form>
+    </div>
+
+    <div class="weight-history">
+        <h3>Weight History</h3>
+        
+        <!-- Weight Chart -->
+        <div class="weight-chart">
+            <canvas id="weightChart"></canvas>
+        </div>
+
+        <!-- Weight History Table -->
+        <table class="weight-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Weight (kg)</th>
+                    <th>Change</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in weight_history %}
+                <tr>
+                    <td>{{ entry.date.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ "%.1f"|format(entry.weight) }}</td>
+                    <td>
+                        {% if not loop.last %}
+                            {% set change = entry.weight - weight_history[loop.index].weight %}
+                            {% if change > 0 %}
+                                <span style="color: red">+{{ "%.1f"|format(change) }}</span>
+                            {% elif change < 0 %}
+                                <span style="color: green">{{ "%.1f"|format(change) }}</span>
+                            {% else %}
+                                <span style="color: gray">0</span>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+// Prepare data for the chart
+const weightData = {{ weight_history|tojson }};
+const dates = weightData.map(entry => new Date(entry.date).toLocaleDateString());
+const weights = weightData.map(entry => entry.weight);
+
+// Create the chart
+const ctx = document.getElementById('weightChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: dates.reverse(),
+        datasets: [{
+            label: 'Weight (kg)',
+            data: weights.reverse(),
+            borderColor: '#567681',
+            tension: 0.1,
+            fill: false
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: false,
+                grid: {
+                    color: '#eee'
+                }
+            },
+            x: {
+                grid: {
+                    color: '#eee'
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: false
+            }
+        }
+    }
+});
+</script>
+
+{% endblock %}

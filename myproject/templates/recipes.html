@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Recipes - NutriPlan Pro{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="dashboard-header">
+    <div class="container">
+        <h1 class="dashboard-title">Healthy Recipes</h1>
+        <p class="dashboard-subtitle">Discover delicious and nutritious meal options</p>
+    </div>
+</section>
+
+<!-- Recipes Content -->
+<section class="container" style="padding: 2rem 0;">
+    <!-- Breakfast Recipes -->
+    {% if breakfast %}
+    <div class="mb-8">
+        <h2 style="font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 2rem; display: flex; align-items: center;">
+            <i class="fas fa-sun" style="color: var(--accent-color); margin-right: 0.5rem;"></i>
+            Breakfast Recipes
+        </h2>
+        <div class="grid grid-3">
+            {% for recipe in breakfast %}
+            <div class="meal-card fade-in-up">
+                <div class="meal-header" style="background: linear-gradient(135deg, var(--accent-color), #fbbf24);">
+                    <div class="meal-type">
+                        <i class="fas fa-sun"></i> Breakfast
+                    </div>
+                    <div class="meal-name">{{ recipe.Name }}</div>
+                </div>
+                
+                <div class="meal-content">
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Calories }}</div>
+                            <div class="nutrition-label">Calories</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Proteins }}g</div>
+                            <div class="nutrition-label">Protein</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Carbohydrates }}g</div>
+                            <div class="nutrition-label">Carbs</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Fats }}g</div>
+                            <div class="nutrition-label">Fats</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-list"></i> Ingredients
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ recipe.Ingredients }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-utensils"></i> Instructions
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ recipe.Steps }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Lunch/Dinner Recipes -->
+    {% if lunchdinner %}
+    <div class="mb-8">
+        <h2 style="font-size: 2rem; font-weight: 700; color: var(--gray-900); margin-bottom: 2rem; display: flex; align-items: center;">
+            <i class="fas fa-utensils" style="color: var(--primary-color); margin-right: 0.5rem;"></i>
+            Lunch & Dinner Recipes
+        </h2>
+        <div class="grid grid-3">
+            {% for recipe in lunchdinner %}
+            <div class="meal-card fade-in-up">
+                <div class="meal-header" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));">
+                    <div class="meal-type">
+                        <i class="fas fa-utensils"></i> Main Course
+                    </div>
+                    <div class="meal-name">{{ recipe.Name }}</div>
+                </div>
+                
+                <div class="meal-content">
+                    <div class="nutrition-grid">
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Calories }}</div>
+                            <div class="nutrition-label">Calories</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Proteins }}g</div>
+                            <div class="nutrition-label">Protein</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Carbohydrates }}g</div>
+                            <div class="nutrition-label">Carbs</div>
+                        </div>
+                        <div class="nutrition-item">
+                            <div class="nutrition-value">{{ recipe.Fats }}g</div>
+                            <div class="nutrition-label">Fats</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-list"></i> Ingredients
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ recipe.Ingredients }}
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 1rem;">
+                        <h4 style="color: var(--gray-900); margin-bottom: 0.5rem; font-size: 1rem;">
+                            <i class="fas fa-utensils"></i> Instructions
+                        </h4>
+                        <p style="color: var(--gray-600); font-size: 0.875rem; line-height: 1.5;">
+                            {{ recipe.Steps }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- No Recipes Message -->
+    {% if not breakfast and not lunchdinner %}
+    <div class="text-center" style="padding: 4rem 0;">
+        <i class="fas fa-book" style="font-size: 4rem; color: var(--gray-400); margin-bottom: 2rem;"></i>
+        <h2 style="color: var(--gray-900); margin-bottom: 1rem;">No Recipes Available</h2>
+        <p style="color: var(--gray-600); margin-bottom: 2rem;">We're working on adding more delicious recipes. Please check back later.</p>
+        <a href="{{ url_for('home') }}" class="btn btn-primary">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
