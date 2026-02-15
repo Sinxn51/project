@@ -1,0 +1,2 @@
+This is a test file to confirm the sui directory is working properly.
+Repository cloned successfully from: https://github.com/Sinxn51/sui.git
