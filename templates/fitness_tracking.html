@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Fitness Tracking</h1>
+    
+    <div class="row">
+        <!-- Workout Analytics -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Your Workout Analytics</h4>
+                </div>
+                <div class="card-body">
+                    {% if analytics %}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Total Workouts</h5>
+                                <p class="display-4">{{ analytics.total_workouts }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Current Streak</h5>
+                                <p class="display-4">{{ analytics.streak }} days</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Total Duration</h5>
+                                <p>{{ analytics.total_duration }} minutes</p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Calories Burned</h5>
+                                <p>{{ analytics.total_calories|round(1) }} kcal</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <h5>Exercise Breakdown</h5>
+                        <ul class="list-group">
+                            {% for exercise, count in analytics.exercise_breakdown.items() %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    {{ exercise }}
+                                    <span class="badge bg-primary rounded-pill">{{ count }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p>No workout data available yet. Start logging your workouts to see analytics!</p>
+                        </div>
+                    {% endif %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('log_workout') }}" class="btn btn-primary">Log a Workout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Fitness Goals -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Your Fitness Goals</h4>
+                </div>
+                <div class="card-body">
+                    {% if goals %}
+                        {% for goal in goals %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        {% if goal.goal_type == 'weight_loss' %}
+                                            Weight Loss Goal
+                                        {% elif goal.goal_type == 'workout_frequency' %}
+                                            Workout Frequency Goal
+                                        {% elif goal.goal_type == 'calories_burned' %}
+                                            Calories Burned Goal
+                                        {% else %}
+                                            {{ goal.goal_type|title }} Goal
+                                        {% endif %}
+                                    </h5>
+                                    <p class="card-text">
+                                        Target: 
+                                        {% if goal.goal_type == 'weight_loss' %}
+                                            {{ goal.target_value }} kg
+                                        {% elif goal.goal_type == 'workout_frequency' %}
+                                            {{ goal.target_value|int }} workouts
+                                        {% elif goal.goal_type == 'calories_burned' %}
+                                            {{ goal.target_value|int }} calories
+                                        {% else %}
+                                            {{ goal.target_value }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text">
+                                        Deadline: {{ goal.deadline.strftime('%Y-%m-%d') }}
+                                    </p>
+                                    <div class="progress">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ goal.progress }}%;" aria-valuenow="{{ goal.progress }}" aria-valuemin="0" aria-valuemax="100">{{ goal.progress|round(1) }}%</div>
+                                    </div>
+                                    {% if goal.completed %}
+                                        <div class="alert alert-success mt-2">
+                                            <strong>Goal Achieved!</strong> Completed on {{ goal.completion_date.strftime('%Y-%m-%d') }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="alert alert-info">
+                            <p>No fitness goals set yet. Set your first goal to start tracking progress!</p>
+                        </div>
+                    {% endif %}
+                    <div class="mt-3">
+                        <a href="{{ url_for('set_fitness_goal') }}" class="btn btn-success">Set a New Goal</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Personalized Workout Plan -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">Your Personalized Workout Plan</h4>
+        </div>
+        <div class="card-body">
+            {% if workout_plan %}
+                <div class="row">
+                    {% for workout in workout_plan %}
+                        <div class="col-md-4 mb-3">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    <h5 class="mb-0">Day {{ workout.day }}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>Duration:</strong> {{ workout.duration }} minutes</p>
+                                    <h6>Exercises:</h6>
+                                    <ul class="list-group">
+                                        {% for exercise in workout.exercises %}
+                                            <li class="list-group-item">
+                                                <strong>{{ exercise.name }}</strong>
+                                                <br>
+                                                <small>
+                                                    Category: {{ exercise.category|title }}
+                                                    <br>
+                                                    Difficulty: {{ exercise.difficulty|title }}
+                                                    <br>
+                                                    Targets: {{ exercise.muscle_groups|join(', ')|title }}
+                                                </small>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <p>No workout plan available. Please check back later or contact support.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

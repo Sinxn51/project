@@ -11,37 +11,70 @@ from collections import defaultdict
 
 
 def meal(cuisine,meal,calorie,hascancer,hasdiabetes,df2):
+    # Make a copy to avoid modifying original
+    df_filtered = df2.copy()
+    
+    # Filter for cancer patients
     if hascancer=='Y':
-        for index,i in df2.iterrows():
-            if (i['Fiber']>15) or (('high fiber') in i['soup']):
-                continue
-            else:
-                df2.drop(index,inplace=True)
+        df_filtered = df_filtered[
+            (df_filtered['Fiber'] <= 15) & 
+            (~df_filtered['soup'].str.contains('high fiber', case=False, na=False))
+        ]
+    
+    # Filter for diabetes patients
     if hasdiabetes=='Y':
-        for index,i in df2.iterrows():
-            if 'diabet' not in i['soup']:
-                df2.drop(index,inplace=True)
+        df_filtered = df_filtered[
+            df_filtered['soup'].str.contains('diabet', case=False, na=False)
+        ]
     
+    # Filter by cuisine if no health conditions
     if hascancer!='Y' and hasdiabetes !='Y':
-        for index,i in df2.iterrows():
-            if cuisine not in i['soup']:
-                df2.drop(index,inplace=True)
+        df_filtered = df_filtered[
+            df_filtered['soup'].str.contains(cuisine, case=False, na=False)
+        ]
     
-    for index,i in df2.iterrows():
-        if (calorie+50>i['Calories'] and calorie-200<i['Calories']):
-            continue
-        else:
-            df2.drop(index,inplace=True)
-    lst=[]
-    if meal=='breakfast':
-        lst.append(int(df2.sample()['ID']))
+    # Filter by calorie range
+    df_filtered = df_filtered[
+        (df_filtered['Calories'] >= calorie - 200) & 
+        (df_filtered['Calories'] <= calorie + 50)
+    ]
+    
+    # If no results after filtering, relax constraints
+    if len(df_filtered) == 0:
+        print(f"Warning: No meals found with strict filters. Relaxing constraints...")
+        df_filtered = df2.copy()
+        
+        # Try with just calorie constraint (wider range)
+        df_filtered = df_filtered[
+            (df_filtered['Calories'] >= calorie - 400) & 
+            (df_filtered['Calories'] <= calorie + 200)
+        ]
+        
+        # If still empty, just use all meals
+        if len(df_filtered) == 0:
+            print(f"Warning: Using all available meals")
+            df_filtered = df2.copy()
+    
+    lst = []
+    if meal == 'breakfast':
+        lst.append(int(df_filtered.sample()['ID'].values[0]))
         return lst
     else:
-        lst.append(int(df2.sample()['ID']))
-        temp=int(df2.sample()['ID'])
-        while temp==lst[0]:
-            temp=int(df2.sample()['ID'])
-        lst.append(temp)
+        # Get first meal
+        lst.append(int(df_filtered.sample()['ID'].values[0]))
+        
+        # Get second meal (different from first)
+        if len(df_filtered) > 1:
+            remaining = df_filtered[df_filtered['ID'] != lst[0]]
+            if len(remaining) > 0:
+                lst.append(int(remaining.sample()['ID'].values[0]))
+            else:
+                # If only one option, use it twice
+                lst.append(lst[0])
+        else:
+            # If only one option, use it twice
+            lst.append(lst[0])
+        
         return lst
 
 def generatemeal(age,height,weight,exercise,sex,hascancer,hasdiabetes,cuisine):
@@ -86,37 +119,26 @@ def generatemeal(age,height,weight,exercise,sex,hascancer,hasdiabetes,cuisine):
     return lstDoc, breakfastlst
 #     return breakfastlst
 
-def get_recommendations(ID, cosine_sim, idx, df):
+def get_recommendations(ID, cosine_sim, idx,df):
     # Get the index of the item that matches the title
     indices_from_food_id = pd.Series(df.index, index=df['ID'])
     if idx == -1 and ID != "":
-        try:
-            idx = indices_from_food_id[ID]
-        except KeyError:
-            # If ID not found, return a random ID from the dataframe
-            return int(df.sample()['ID'])
+        idx = indices_from_food_id[ID]
 
-    # Get the pairwise similarity scores of all dishes with that dish
-    try:
-        sim_scores = list(enumerate(cosine_sim[idx]))
+    # Get the pairwsie similarity scores of all dishes with that dish
+    sim_scores = list(enumerate(cosine_sim[idx]))
 
-        # Sort the dishes based on the similarity scores
-        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        
-        # Get the scores of the most similar dishes
-        sim_scores = sim_scores[1:25]
+    # Sort the dishes based on the similarity scores
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    
+    # Get the scores of the 10 most similar dishes
+    sim_scores = sim_scores[1:25]
 
-        # Get the food indices
-        food_indices = [i[0] for i in sim_scores]
+    # Get the food indices
+    food_indices = [i[0] for i in sim_scores]
 
-        # Return the top most similar dish
-        if food_indices:
-            return int(df.iloc[food_indices[0]]['ID'])
-        else:
-            return int(df.sample()['ID'])
-    except (IndexError, KeyError):
-        # Fallback to random selection if any error occurs
-        return int(df.sample()['ID'])
+    # Return the top 10 most similar dishes
+    return food_indices[1]
 
 def cosinemat(df):
     count = CountVectorizer(stop_words='english')
@@ -220,7 +242,10 @@ def feedbacklst(userID,age,height,weight,sex,exercise,hascancer,hasdiabetes,cuis
 
 
 def gender():
+    """Get user gender - should be passed from user profile"""
     return 'M'
 
 def cuisine():
-    return 'gujarat'
+    """Get user cuisine preference - should be passed from user profile"""
+    # Return a more generic cuisine that's likely in the database
+    return 'indian'

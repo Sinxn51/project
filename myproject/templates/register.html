@@ -11,7 +11,7 @@
                 <p style="color: var(--gray-600);">Join NutriPlan Pro and start your health journey</p>
             </div>
 
-            <form method="POST">
+            <form method="POST" novalidate>
                 {{ form.hidden_tag() }}
                 
                 <div class="grid grid-2">
@@ -19,14 +19,28 @@
                         <label class="form-label" for="email">
                             <i class="fas fa-envelope"></i> Email Address
                         </label>
-                        {{ form.email(class="form-input", placeholder="Enter your email", id="email") }}
+                        {{ form.email(class="form-input", placeholder="Enter your email", id="email", autocomplete="email") }}
+                        {% if form.email.errors %}
+                            <div class="error-message" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div class="form-group">
                         <label class="form-label" for="username">
                             <i class="fas fa-user"></i> Username
                         </label>
-                        {{ form.username(class="form-input", placeholder="Choose a username", id="username") }}
+                        {{ form.username(class="form-input", placeholder="Choose a username", id="username", autocomplete="username") }}
+                        {% if form.username.errors %}
+                            <div class="error-message" style="color: #ef4444; font-size: 0.875rem; margin-top: 0.5rem;">
+                                {% for error in form.username.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -36,6 +50,13 @@
                             <i class="fas fa-lock"></i> Password
                         </label>
                         {{ form.password(class="form-input", placeholder="Create a password", id="password") }}
+                        {% if form.password.errors %}
+                            <div class="error-message">
+                                {% for error in form.password.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
 
                     <div class="form-group">
@@ -43,6 +64,13 @@
                             <i class="fas fa-lock"></i> Confirm Password
                         </label>
                         {{ form.pass_confirm(class="form-input", placeholder="Confirm your password", id="pass_confirm") }}
+                        {% if form.pass_confirm.errors %}
+                            <div class="error-message">
+                                {% for error in form.pass_confirm.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -69,7 +97,14 @@
                     </div>
                 </div>
 
-                <div class="grid grid-2">
+                <div class="grid grid-3">
+                    <div class="form-group">
+                        <label class="form-label" for="gender">
+                            <i class="fas fa-venus-mars"></i> Gender
+                        </label>
+                        {{ form.gender(class="form-select", id="gender") }}
+                    </div>
+
                     <div class="form-group">
                         <label class="form-label" for="blood">
                             <i class="fas fa-tint"></i> Blood Type

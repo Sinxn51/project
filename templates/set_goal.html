@@ -1,0 +1,43 @@
+    {% extends "base.html" %}
+
+    {% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Set Fitness Goal</h1>
+        
+        <div class="card">
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('set_fitness_goal') }}">
+                    <div class="mb-3">
+                        <label for="goal_type" class="form-label">Goal Type</label>
+                        <select class="form-select" id="goal_type" name="goal_type" required>
+                            <option value="weight_loss">Weight Loss</option>
+                            <option value="workout_frequency">Workout Frequency</option>
+                            <option value="calories_burned">Calories Burned</option>
+                            <option value="strength">Strength Improvement</option>
+                            <option value="endurance">Endurance Improvement</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="target_value" class="form-label">Target Value</label>
+                        <input type="number" class="form-control" id="target_value" name="target_value" step="0.01" min="0" required>
+                        <small class="form-text text-muted">For weight loss: kg to lose, for workout frequency: number of workouts, for calories: total calories to burn</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="deadline" class="form-label">Deadline</label>
+                        <input type="date" class="form-control" id="deadline" name="deadline" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description (optional)</label>
+                        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Set Goal</button>
+                    <a href="{{ url_for('exercise') }}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endblock %}

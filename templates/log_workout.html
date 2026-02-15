@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Log Your Workout</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('log_workout') }}">
+                <div class="mb-3">
+                    <label for="exercise_name" class="form-label">Exercise</label>
+                    <select class="form-select" id="exercise_name" name="exercise_name" required>
+                        <option value="" selected disabled>Select an exercise</option>
+                        {% for exercise in exercise_options %}
+                            <option value="{{ exercise }}">{{ exercise }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="duration" class="form-label">Duration (minutes)</label>
+                    <input type="number" class="form-control" id="duration" name="duration" min="1" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="intensity" class="form-label">Intensity</label>
+                    <select class="form-select" id="intensity" name="intensity" required>
+                        <option value="light">Light</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes (optional)</label>
+                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Log Workout</button>
+                <a href="{{ url_for('exercise') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
